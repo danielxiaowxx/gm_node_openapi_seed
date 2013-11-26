@@ -60,7 +60,7 @@ gmfw_fw.commonHandler = function(req, res, next, handleFn) {
 
     funcParamVals.push(req.log); // 将log对象放在函数接收参数的最后
 
-    var result = handleFn['handelFn'].apply(this, funcParamVals);
+    var result = handleFn.apply(this, funcParamVals);
     if (result && result.then && typeof (result.then) === 'function') { // is promise object
         result.then(function (data) {
             res.send(gmfw_fw.formatResult(data));

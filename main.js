@@ -139,10 +139,10 @@ function startServer() {
         _.each(services, function (handlers) {
             _.each(handlers, function (handleFn, path) {
                 server.get({path: path, version: version}, function (req, res, next) {
-                    gmfw.fw.commonHandler.call(this, req, res, next, handleFn);
+                    gmfw.fw.commonHandler.call(this, req, res, next, handleFn['handelFn']);
                 });
                 server.post({path: path, version: version}, function (req, res, next) {
-                    gmfw.fw.commonHandler.call(this, req, res, next, handleFn);
+                    gmfw.fw.commonHandler.call(this, req, res, next, handleFn['handelFn']);
                 });
             });
         });
