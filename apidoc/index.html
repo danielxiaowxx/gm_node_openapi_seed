@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html ng-app="openapi">
+<head>
+    <meta charset="utf-8">
+
+    <title>GlobalMarket Node OpenAPI Document</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="assets/css/bootstrap.css" rel="stylesheet">
+    <link href="assets/css/app.css" rel="stylesheet">
+</head>
+<body ng-controller="AppCtrl">
+
+<div tabset>
+    <div tab ng-repeat="version in versions" heading="{{version}}" select="changeVersion(version)"></div>
+</div>
+
+<br/>
+
+<div class="row">
+    <div class="col-lg-2">
+        <div tabset type="'pills'" vertical="true">
+            <div tab ng-repeat="item in services" heading="{{item.service}}" select="changeService(item.service, item.version)"></div>
+        </div>
+    </div>
+
+    <div class="col-lg-10">
+        <table class="table table-bordered table-striped">
+            <thead>
+            <tr>
+                <th rowspan="2">Path</th>
+                <th rowspan="2">Description</th>
+                <th>Parameters</th>
+                <th>Return</th>
+            </tr>
+            <tr>
+                <th>
+                    <div class="row">
+                        <div class="col-lg-2">Name</div>
+                        <div class="col-lg-2">Type</div>
+                        <div class="col-lg-8">Description</div>
+                    </div>
+                </th>
+                <th>
+                    <div class="row">
+                        <div class="col-lg-3">Type</div>
+                        <div class="col-lg-9">Description</div>
+                    </div>
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="(key, item) in serviceAPIDoc">
+                <td rowspan="{{item.paramVals.length || 1}}">{{key}}</td>
+                <td rowspan="{{item.paramVals.length || 1}}">
+                    <p ng-bind-html-unsafe="item.commentSummary"></p>
+                    <p><small ng-bind-html-unsafe="item.commentBody"></small></p>
+                </td>
+                <td>
+                    <div class="row" ng-repeat="param in item.paramVals">
+                        <div class="col-lg-2 text-danger">{{param.name}}</div>
+                        <div class="col-lg-2 text-warning">{{param.type}}</div>
+                        <div class="col-lg-8 text-primary">{{param.desc}}</div>
+                    </div>
+                </td>
+                <td rowspan="{{item.paramVals.length || 1}}">
+                    <div class="row">
+                        <div class="col-lg-3 text-danger">{{item.returnVal.type}}</div>
+                        <div class="col-lg-9 text-primary">{{item.returnVal.desc}}</div>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<script type="text/javascript" src="js/libs/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="js/libs/underscore-min.js"></script>
+<script type="text/javascript" src="js/libs/bootstrap3.0.1.js"></script>
+<script type="text/javascript" src="js/libs/angular.js"></script>
+<script type="text/javascript" src="js/libs/ui-bootstrap-tpls-0.6.0.js"></script>
+
+<script type="text/javascript" src="js/app/appCtrl.js"></script>
+<script type="text/javascript" src="js/app/app.js"></script>
+</body>
+</html>
