@@ -1,3 +1,7 @@
+## 作者简介
+
+Daniel.xiao，[环球市场(GlobalMarket)](http://www.globalmarket.com "为中国制造创造优质标志")IT研发部架构师
+
 ## 如何开始
 
 1. 安装node (略)
@@ -216,3 +220,18 @@ db/gmMongodb.js管理所有mongodb的连接，当需要增加连接的mongodb，
         name: 'OtherError',
         message: 'I just do not like you!'
     }
+
+## 如何生成API文档
+	
+1. 运行genAPIDoc.js文件
+
+		node genAPIDoc.js
+
+2. 运行http服务器，root目录指向apidoc目录。以下为nginx作为服务器的配置
+
+		location ~ ^/nodeopenapidoc/ {
+		    rewrite  /nodeopenapidoc(.*)$ $1 break;
+		    root [nodeopenapi project path]/apidoc;
+		}
+
+打开浏览器访问http://localhost/nodeopenapidoc/index.html
