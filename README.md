@@ -1,6 +1,6 @@
 ## 作者简介
 
-Daniel.xiao，[环球市场(GlobalMarket)](http://www.globalmarket.com "为中国制造创造优质标志")IT研发部架构师
+Daniel.xiao，[环球市场(GlobalMarket)](http://www.globalmarket.com "让'中国制造'成为优质标志")IT研发部架构师
 
 ## 如何开始
 
