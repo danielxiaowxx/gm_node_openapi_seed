@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html ng-app="openapi">
+<head>
+    <meta charset="utf-8">
+
+    <title>GlobalMarket Node OpenAPI Test Result</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="assets/css/bootstrap.css" rel="stylesheet">
+    <link href="assets/css/app.css" rel="stylesheet">
+</head>
+<body ng-controller="AppCtrl">
+
+<br/>
+
+<div class="row well">
+    <div class="col-lg-4">
+        执行结果：
+        <span class="text-success" ng-if="testResultSummary.ok"><strong>可喜可贺，全部通过</strong></span>
+        <span class="text-danger" ng-if="!testResultSummary.ok"><strong>很遗憾，有错误</strong></span>
+    </div>
+    <div class="col-lg-4">
+        <span class="text-success" ng-if="testResultSummary.ok"><strong>成功：{{testResultSummary.total}}/{{testResultSummary.total}}</strong></span>
+        <span class="text-danger" ng-if="!testResultSummary.ok"><strong>失败：{{testResultSummary.failures}}/{{testResultSummary.total}}</strong></span>
+    </div>
+    <div class="col-lg-2">
+        执行时间：<span class="text-info"><strong>{{testResultSummary.duration}}ms</strong></span>
+    </div>
+    <div class="col-lg-2">
+        <button type="button" class="btn btn-warning pull-right" ng-model="showOnlyFail" btn-checkbox>
+            {{showOnlyFail ? '显示全部' : '只显示错误'}}
+        </button>
+    </div>
+</div>
+
+<ul>
+    <li ng-repeat="(itemKey, itemVal) in testResultDetail">
+        {{itemKey}}
+        <ul>
+            <li ng-repeat="(version, vData) in itemVal">
+                {{version}}
+                <ul>
+                    <li ng-repeat="(service, sData) in vData">
+                        {{service}}
+                        <ul>
+                            <li ng-repeat="(servicePath, spData) in sData">
+                                {{servicePath}}
+                                <ul>
+                                    <li ng-repeat="(testCase, tcData) in spData" ng-hide="showOnlyFail && tcData.pass">
+                                        <span ng-if="!showOnlyFail && tcData.pass" class="label label-success">{{testCase}} <span class="glyphicon glyphicon-ok"></span></span>
+
+                                        <span ng-if="!tcData.pass" ng-init="showDetail = false;">
+                                            <a title="点击显示或隐藏详情" href="javascript:void(0)" class="text-danger" ng-click="showDetail = !showDetail"><span class="label label-danger">{{testCase}} <span class="glyphicon glyphicon-remove"></span></span></a>
+                                            <span title="点击左边显示或隐藏详情" class="glyphicon glyphicon-hand-left"></span>
+                                            <div class="panel panel-default" ng-show="showDetail">
+                                                <div class="panel-body text-danger">
+                                                    {{tcData.stackMessage}}
+                                                </div>
+                                            </div>
+                                        </span>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </li>
+</ul>
+
+<script type="text/javascript" src="js/libs/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="js/libs/underscore-min.js"></script>
+<script type="text/javascript" src="js/libs/bootstrap3.0.1.js"></script>
+<script type="text/javascript" src="js/libs/angular.js"></script>
+<script type="text/javascript" src="js/libs/ui-bootstrap-tpls-0.6.0.js"></script>
+<script type="text/javascript" src="data/data.json"></script>
+
+<script type="text/javascript" src="js/app/appCtrl.js"></script>
+<script type="text/javascript" src="js/app/app.js"></script>
+</body>
+</html>

@@ -8,9 +8,9 @@ var fs = require('fs');
 var all = require('node-promise').all;
 var defer = require('node-promise').defer;
 
-var routes = require('./routes').Routes;
+var routes = require('../routes').Routes;
 
-var routeDirPath = __dirname + '/routes';
+var routeDirPath = process.cwd() + '/routes';
 
 
 /**
@@ -93,9 +93,10 @@ function genAPIDoc() {
             });
         });
 
-        fs.writeFile(__dirname + '/apidoc/data/data.json', JSON.stringify(docData), function(err) {
+        fs.writeFile(process.cwd() + '/apidoc/data/data.json', 'var API_DATA = ' + JSON.stringify(docData), function(err) {
             if (err) throw err;
             console.log('Generate api doc data successful!');
+            process.exit();
         });
     });
 }

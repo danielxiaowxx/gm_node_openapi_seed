@@ -12,26 +12,13 @@
 
         /*========== Scope Models ==================================================*/
 
-        $scope.versions = [];
+        $scope.testResultDetail = {};
 
-        $scope.services = [];
+        $scope.testResultSummary = {};
 
-        $scope.serviceAPIDoc = {};
-
-        $scope.docData = {};
+        $scope.showOnlyFail = false;
 
         /*========== Scope Functions ==================================================*/
-
-        $scope.changeVersion = function(version) {
-            $scope.services = [];
-            _.each($scope.docData[version], function(data, key) {
-                $scope.services.push({version:version, service:key});
-            });
-        }
-
-        $scope.changeService = function(service, version) {
-            $scope.serviceAPIDoc = $scope.docData[version][service];
-        }
 
         /*========== Listeners ==================================================*/
 
@@ -40,11 +27,10 @@
         /*========== Private Functions ==================================================*/
 
         function _init() {
-            var data = API_DATA;
-            $scope.docData = data;
-            _.each(data, function(data, key) {
-                $scope.versions.push(key);
-            });
+            var data = TEST_DATA;
+            $scope.testResultDetail = TEST_DATA.detail['unittest.js'].detail;
+            $scope.testResultSummary = TEST_DATA.detail['unittest.js'].summary;
+            console.log(data);
         }
 
         _init();

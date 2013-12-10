@@ -124,6 +124,90 @@ Daniel.xiao，[环球市场(GlobalMarket)](http://www.globalmarket.com "让'中�
 	    return {name:name, message:'hello ' + name};
 	}
 
+## 单元测试
+
+在unittest/unittest.js中按照路由的配置(routes/index.js)对各个路径进行单元测试:
+
+1. 配置
+
+	- 当不启动登录认证时（即config.js中的Auth.required = false），配置如下
+	
+		    setUp: function (callback) {
+		        // config
+		        this.server = 'http://localhost:8080';
+		
+		        this.httpRequest = request.defaults({
+		            json: true
+		        });
+		
+		        ......
+		    }
+	
+	- 当启动登录认证时（即config.js中的Auth.required = true），配置如下
+	 
+		    setUp: function (callback) {
+		        // config
+		        this.server = 'http://local.globalmarket.com/nodeopenapi';
+		
+		        this.httpRequest = request.defaults({
+		            json: true,
+		            headers: {
+		                cookie: 'JSESSIONID=3FC1C68B7BBCC87EFFE6237D22FFD180-n1;'
+		            }
+		        });
+		
+		        callback();
+		    }
+	
+		*注意几点：*	
+		1. local.globalmarket.com指向本地	
+		2. 本地nignx的nodeopenapi转向localhost:8080，如下配置
+		
+				location ~ ^/nodeopenapi/ {
+			        proxy_set_header  Host $host;
+				    rewrite  /nodeopenapi(.*)$ $1 break;
+				    proxy_pass http://localhost:8080;
+				}
+
+		3. 浏览器打开http://*.globalmarket.com，用账号登录，然后把登录的JSESSIONID值代换上面的值
+
+2. 增加单元测试方法
+
+	按照路由配置(routes/index.js)，将路径的处理部分换成测试方法，如下所示：
+
+	    '1.0.0': {
+	        'Demo': {
+	            'demo/sayHello': {
+	                // 测试传参数
+	                test1: function (test) {
+	                    var name = 'daniel';
+	                    this.httpRequest.get(this.server + '/demo/sayHello?' + qs.stringify({name:name}), {}, function(error, response, body) {
+	                        test.ifError(error);
+	                        test.equal(body.result, 'Hello ' + name, JSON.stringify(body));
+	                        test.done();
+	                    });
+	                },
+	                // 测试不传参数
+	                test2: function(test) {
+	                    this.httpRequest.get(this.server + '/demo/sayHello', {}, function(error, response, body) {
+	                        test.ifError(error);
+	                        test.ok(body.error);
+	                        test.done();
+	                    });
+	                }
+	            },
+			......
+
+	单元测试用到了nodeunit，具体的测试API方法请参考https://github.com/caolan/nodeunit#api-documentation
+	
+	http请求用到了request，具体的请求方法请参考https://github.com/mikeal/request#convenience-methods
+
+3. 运行单元测试
+
+		grunt unittest
+
+	运行成功后，可将unittest/report/index.html拖到浏览器即可浏览 	
+
 ## 如何配置连接mongodb
 
 db/gmMongodb.js管理所有mongodb的连接，当需要增加连接的mongodb，需要配置如下：
@@ -225,13 +309,6 @@ db/gmMongodb.js管理所有mongodb的连接，当需要增加连接的mongodb，
 	
 1. 运行genAPIDoc.js文件
 
-		node genAPIDoc.js
+		grunt genDoc
 
-2. 运行http服务器，root目录指向apidoc目录。以下为nginx作为服务器的配置
-
-		location ~ ^/nodeopenapidoc/ {
-		    rewrite  /nodeopenapidoc(.*)$ $1 break;
-		    root [nodeopenapi project path]/apidoc;
-		}
-
-打开浏览器访问http://localhost/nodeopenapidoc/index.html
+2. 直接将apidoc/index.html拖到浏览器即可浏览

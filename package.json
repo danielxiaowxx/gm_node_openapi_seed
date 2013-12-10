@@ -14,7 +14,10 @@
         "cookie": "0.1.0"
     },
     "devDependencies": {
-        "nodeunit": "0.8.0"
+        "nodeunit": "0.8.2",
+        "request": "2.29.0",
+        "grunt": "~0.4.1",
+        "grunt-shell": "0.6.1"
     },
     "author": "Daniel Xiao",
     "license": "MIT"

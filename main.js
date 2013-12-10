@@ -79,28 +79,34 @@ function startServer() {
     server.pre(function (req, res, next) {
         var authPromise = null;
         if (memcachedClient) { // 进行认证判断
-            var cookies = cookie.parse(req.headers.cookie);
+            var cookies = cookie.parse(req.headers.cookie || '');
             var key = cookies ? cookies['JSESSIONID'] : null;
             var authLoginFn = function(key) {
                 var deferred = defer();
-                memcachedClient.get(key, function(err, data) {
-                    if (err) {
-                        deferred.reject(err);
-                        return;
-                    }
-                    // TODO 判断是否登录，判断逻辑可能需要更改
-                    if (data && data.indexOf('GM_USER') != -1) { // 已登录
-                        deferred.resolve(true);
-                    } else {
+                if (!key) { // 没有cookie key,当没认证
+                    setTimeout(function() {
                         deferred.resolve(false);
-                    }
+                    }, 1);
+                } else {
+                    memcachedClient.get(key, function(err, data) {
+                        if (err) {
+                            deferred.reject(err);
+                            return;
+                        }
+                        // TODO 判断是否登录，判断逻辑可能需要更改
+                        if (data && data.indexOf('GM_USER') != -1) { // 已登录
+                            deferred.resolve(true);
+                        } else {
+                            deferred.resolve(false);
+                        }
+                    });
+                }
 
-                });
                 return deferred.promise;
             }
 
             // 如果访问的url是需要认证并且用户已登录，则允许访问
-            if (authUrlMap[req.getPath().substring(1)] && key) {
+            if (authUrlMap[req.getPath().substring(1)]) {
                 authPromise = authLoginFn(key);
             }
         }
