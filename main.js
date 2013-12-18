@@ -16,12 +16,14 @@ var when = require("node-promise").when;
 
 var routes = require('./routes');
 var gmMongodb = require('./db/gmMongodb');
+var gmOracledb = require('./db/gmOracledb');
 var config = require('./conf/config');
 var gmfw = require('./common/gmframework');
 
 function startServer() {
-    // connect db
+    // 根据需要连接数据库
     gmMongodb.connect();
+    gmOracledb.connect();
 
     // connect memcached server
     var memcachedClient = null;

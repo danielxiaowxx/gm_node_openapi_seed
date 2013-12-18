@@ -13,7 +13,6 @@ var gmfw = require('../common/gmframework');
 var demoDao = require('../db/demoDao');
 
 
-
 /**
  * Just say hello
  *
@@ -39,15 +38,20 @@ exports.sayHello = function(name) {
 /**
  * 与mongodb通讯的例子
  *
- * @param {Number} catId gm分类的id (requied)
- * @return {Object} format:{a:1, b:2}
+ * @return {Object} data demo: {a:1, b:2}
  */
-exports.getDataFromMongodb = function (catId) {
-    if (!catId) {
-        return new restify.InvalidArgumentError('catId is required');
-    }
-    return demoDao.getGmCategoryKeywords(catId);
+exports.getDataFromMongodb = function () {
+    return demoDao.mongoTest();
 };
+
+/**
+ * 与oracle通讯的例子
+ *
+ * @return {Object} data demo: {a:1, b:2}
+ */
+exports.getDateFromOracledb = function() {
+    return demoDao.oracleTest();
+}
 
 
 

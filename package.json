@@ -11,7 +11,8 @@
         "bunyan": "*",
         "dox": "0.4.4",
         "memcached": "0.2.6",
-        "cookie": "0.1.0"
+        "cookie": "0.1.0",
+        "oracle": "0.3.5"
     },
     "devDependencies": {
         "nodeunit": "0.8.2",

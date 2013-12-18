@@ -7,14 +7,13 @@
 /* imports */
 var defer = require("node-promise").defer;
 var gmMongo = require('./gmMongodb');
+var gmOracle = require('./gmOracledb');
 var gmfw = require('../common/gmframework').fw;
 
 /**
- * 获取gm的分类对应的关键字
- * @param catId 分类的id
- * @returns {*}
+ * 连接mongodb测试
  */
-exports.getGmCategoryKeywords = function(catId) {
+exports.mongoTest = function() {
     var deferred = defer();
     var gm_cat = gmMongo.getGMDataDB().collection('gm_cat');
 
@@ -26,6 +25,21 @@ exports.getGmCategoryKeywords = function(catId) {
         deferred.resolve(cat);
     });
 
+    return deferred.promise;
+}
+
+/**
+ * 连接oracle测试
+ */
+exports.oracleTest = function() {
+    var deferred = defer();
+    gmOracle.getGMOracleDBConn().execute('select count(0) count from acc$user', [], function(err, results) {
+        if (err) {
+            deferred.reject(err);
+            return;
+        }
+        deferred.resolve(results);
+    });
     return deferred.promise;
 }
 

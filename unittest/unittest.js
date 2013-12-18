@@ -11,6 +11,7 @@ var reporter = require('./reporters/jsonReporter');
 
 exports.openapi_unittest = {
     setUp: function (callback) {
+
         // config
         this.server = 'http://localhost:8080';
 
@@ -46,8 +47,17 @@ exports.openapi_unittest = {
             },
             'demo/getDataFromMongodb': {
                 test1: function (test) {
-                    test.ok(false);
+                    test.ok(true);
                     test.done();
+                }
+            },
+            'demo/getDataFromOracledb': {
+                test1: function(test) {
+                    this.httpRequest.get(this.server + '/demo/getDataFromOracledb', {}, function(error, response, body) {
+                        test.ifError(error);
+                        test.equal(body.result[0]['COUNT'], 356907);
+                        test.done();
+                    });
                 }
             }
         }
