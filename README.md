@@ -254,6 +254,22 @@ db/gmMongodb.js管理所有mongodb的连接，当需要增加连接的mongodb，
 	    return deferred.promise;
 	}
 
+## 连接oracle数据库注意事项
+
+如果是window7 64位系统，项目已经提供了编译好的node oracle module（debris/oracle.zip）,只需要解压到node_modules目录即可，然后还需要以下步骤
+
+1. 下载oracle instant client
+
+    这里提供window 64位的下载地址：http://www.oracle.com/technetwork/topics/winx64soft-089540.html
+    下载instantclient-basic-windows.x64-12.1.0.1.0.zip和instantclient-sdk-windows.x64-12.1.0.1.0.zip
+    下载完后都解压到C:\instantclient_12_1
+
+2. 设置环境变量如下　
+
+        OCI_INCLUDE_DIR=C:\instantclient_12_1\sdk\include
+        OCI_LIB_DIR=C:\instantclient_12_1\sdk\lib\msvc\vc11
+        Path=...;c:\instantclient_12_1\vc11;c:\instantclient_12_1
+
 ## 如何处理异常
 
 当需要手动处理异常时，直接返回异常对象即可。可用restify已经定义的异常或自定义异常
