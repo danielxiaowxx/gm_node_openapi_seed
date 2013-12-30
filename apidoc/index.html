@@ -26,6 +26,12 @@
 
     <div class="col-lg-10">
         <table class="table table-bordered table-striped">
+            <colgroup>
+                <col width="20%">
+                <col width="20%">
+                <col width="40%">
+                <col width="20%">
+            </colgroup>
             <thead>
             <tr>
                 <th rowspan="2">Path</th>
@@ -36,9 +42,9 @@
             <tr>
                 <th>
                     <div class="row">
-                        <div class="col-lg-2">Name</div>
+                        <div class="col-lg-3">Name</div>
                         <div class="col-lg-2">Type</div>
-                        <div class="col-lg-8">Description</div>
+                        <div class="col-lg-7">Description</div>
                     </div>
                 </th>
                 <th>
@@ -51,19 +57,19 @@
             </thead>
             <tbody>
             <tr ng-repeat="(key, item) in serviceAPIDoc">
-                <td rowspan="{{item.paramVals.length || 1}}">{{key}}</td>
-                <td rowspan="{{item.paramVals.length || 1}}">
+                <td>{{key}}</td>
+                <td>
                     <p ng-bind-html-unsafe="item.commentSummary"></p>
                     <p><small ng-bind-html-unsafe="item.commentBody"></small></p>
                 </td>
                 <td>
                     <div class="row" ng-repeat="param in item.paramVals">
-                        <div class="col-lg-2 text-danger">{{param.name}}</div>
+                        <div class="col-lg-3 text-danger">{{param.name}}</div>
                         <div class="col-lg-2 text-warning">{{param.type}}</div>
-                        <div class="col-lg-8 text-primary">{{param.desc}}</div>
+                        <div class="col-lg-7 text-primary">{{param.desc}}</div>
                     </div>
                 </td>
-                <td rowspan="{{item.paramVals.length || 1}}">
+                <td>
                     <div class="row">
                         <div class="col-lg-3 text-warning">{{item.returnVal.type}}</div>
                         <div class="col-lg-9 text-primary">{{item.returnVal.desc}}</div>

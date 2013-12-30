@@ -270,6 +270,46 @@ db/gmMongodb.js管理所有mongodb的连接，当需要增加连接的mongodb，
         OCI_LIB_DIR=C:\instantclient_12_1\sdk\lib\msvc\vc11
         Path=...;c:\instantclient_12_1\vc11;c:\instantclient_12_1
 
+## 有用的gmOracleDB方法
+
+- executeSql(sql, params)  
+  作用：执行sql语句 
+  
+	*使用例子*：
+
+	    var sql = 'select count(0) count from acc$user';
+	    gmOracle.executeSql(sql, []).then(function(result) {
+	        deferred.resolve(gmOracle.allFieldsToCamel(result));
+	    }, function(err) {
+	        deferred.reject(err);
+	    });	
+
+- getSequenceVal(seq)    
+  作用：取得序列值  
+
+	*使用例子*：
+
+		var seqName = 'SQ_ACC$USER';
+		gmOracledb.getSequenceVal(seqName).then(function(seq) {
+			......    
+		});
+
+- buildPageSql(pageNum, pageSize, strSql)    
+  作用：生成分页sql语句
+
+	*使用例子*：
+
+		var pageNum = 1, pageSize = 10, sql = '...';
+		var pageSql = gmOracledb.buildPageSql(pageNum, pageSize, sql);
+
+- allFieldsToCamel(result)   
+  将数组中的对象元素的所有key格式成camel格式，用于处理executeSql得到的结果(得到的原始result数据里面的字段全部是大写的，所以需要转换成驼峰式的格式)
+
+	*使用例子*：
+
+		deferred.resolve(gmOracle.allFieldsToCamel(result));
+ 
+
 ## 如何处理异常
 
 当需要手动处理异常时，直接返回异常对象即可。可用restify已经定义的异常或自定义异常

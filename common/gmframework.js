@@ -134,3 +134,17 @@ gmfw_util.getLogger = function(params) {
     var log = params[params.length - 1];
     return log;
 }
+
+/**
+ * parse str to camel format
+ *
+ * for example:
+ *    USER_ID -> userId
+ *
+ * @param str
+ * @returns {string}
+ */
+gmfw_util.toCamel = function(str) {
+    str = str.toLowerCase();
+    return str.replace(/([\-_][a-zA-Z])/g, function($1){return $1.toUpperCase().replace(/[\-_]/g,'');});
+}

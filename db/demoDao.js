@@ -8,7 +8,6 @@
 var defer = require("node-promise").defer;
 var gmMongo = require('./gmMongodb');
 var gmOracle = require('./gmOracledb');
-var gmfw = require('../common/gmframework').fw;
 
 /**
  * 连接mongodb测试
@@ -33,13 +32,14 @@ exports.mongoTest = function() {
  */
 exports.oracleTest = function() {
     var deferred = defer();
-    gmOracle.getGMOracleDBConn().execute('select count(0) count from acc$user', [], function(err, results) {
-        if (err) {
-            deferred.reject(err);
-            return;
-        }
-        deferred.resolve(results);
+
+    var sql = 'select count(0) count from acc$user';
+    gmOracle.executeSql(sql, []).then(function(result) {
+        deferred.resolve(gmOracle.allFieldsToCamel(result));
+    }, function(err) {
+        deferred.reject(err);
     });
+
     return deferred.promise;
 }
 
