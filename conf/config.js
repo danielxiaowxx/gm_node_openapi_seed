@@ -7,6 +7,7 @@
 var CONF = module.exports;
 var MongoDB = CONF.MongoDB = {};
 var OracleDB = CONF.OracleDB = {};
+var MysqlDB = CONF.MysqlDB = {};
 var Server = CONF.Server = {};
 var Auth = CONF.Auth = {};
 
@@ -20,6 +21,12 @@ MongoDB.gm_data_url = 'mongodb://192.168.88.225:27017/gm_data'; // gm_data mongo
 OracleDB.connStr = '(DESCRIPTION =(ADDRESS_LIST =(ADDRESS = (PROTOCOL = TCP)(HOST = 192.168.86.16)(PORT = 1521)))(CONNECT_DATA =(SERVICE_NAME = core01.db.globalmarket.com)))';
 OracleDB.user = 'user';
 OracleDB.password = 'password';
+
+/* == Mysql DB config == */
+MysqlDB.host = '192.168.88.215';
+MysqlDB.user = 'user';
+MysqlDB.password = 'password';
+MysqlDB.database = 'dbname';
 
 /* ==== 认证服务，主服务使用Memcached共享Session信息，这里通过去Memcached取得Session信息来判断是否已经登录 === */
 Auth.required = false; // 是否需要认证，如果设置为false，则以下配置都可忽略

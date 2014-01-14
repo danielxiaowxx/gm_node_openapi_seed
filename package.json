@@ -15,7 +15,8 @@
         "oracle": "0.3.5",
         "generic-pool": "2.0.4",
         "async": "0.2.9",
-        "request": "2.30.0"
+        "request": "2.30.0",
+        "mysql": "*"
     },
     "devDependencies": {
         "nodeunit": "0.8.2",

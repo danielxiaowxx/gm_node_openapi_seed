@@ -8,6 +8,7 @@
 var defer = require("node-promise").defer;
 var gmMongo = require('./gmMongodb');
 var gmOracle = require('./gmOracledb');
+var gmMysql = require('./gmMysqldb');
 
 /**
  * 连接mongodb测试
@@ -36,6 +37,22 @@ exports.oracleTest = function() {
     var sql = 'select count(0) count from acc$user';
     gmOracle.executeSql(sql, []).then(function(result) {
         deferred.resolve(gmOracle.allFieldsToCamel(result));
+    }, function(err) {
+        deferred.reject(err);
+    });
+
+    return deferred.promise;
+}
+
+/**
+ * 连接Mysql测试
+ */
+exports.mysqlTest = function() {
+    var deferred = defer();
+
+    var sql = 'select count(0) count from words';
+    gmMysql.executeSql(sql, []).then(function(result) {
+        deferred.resolve(result);
     }, function(err) {
         deferred.reject(err);
     });

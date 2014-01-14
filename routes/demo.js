@@ -53,6 +53,15 @@ exports.getDateFromOracledb = function() {
     return demoDao.oracleTest();
 }
 
+/**
+ * 与mysql通讯的例子
+ *
+ * @return {Object} data demo: {a:1, b:2}
+ */
+exports.getDateFromMysqldb = function() {
+    return demoDao.mysqlTest();
+}
+
 
 
 
