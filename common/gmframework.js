@@ -53,7 +53,7 @@ gmfw_fw.commonHandler = function(req, res, next, handleFn) {
 
     if (funcParamNames) {
         funcParamNames.forEach(function (paramName) {
-            var paramVal = req.params[paramName] || null;
+            var paramVal = req.params[paramName] || req.params[paramName] === 0 ? req.params[paramName] : null; // 允许传参考为0的值
             funcParamVals.push(paramVal);
         });
     }
