@@ -14,6 +14,7 @@ var Auth = CONF.Auth = {};
 /* ==== MDB配置信息 ==== */
 /**
  * format: [dbname]_url
+ * 参考：http://docs.mongodb.org/manual/reference/connection-string/
  */
 MongoDB.gm_data_url = 'mongodb://192.168.88.225:27017/gm_data'; // gm_data mongodb server url
 

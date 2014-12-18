@@ -360,27 +360,22 @@ db/gmMongodb.js管理所有mongodb的连接，当需要增加连接的mongodb，
 
 在error/errors.js中调用regError方法注册异常类型即可。  
  
-*示例：增加异常名称为UserNotExist,errorCode为100002的自定义异常*
-    
-	gmfw.regError('UserNotExist', 100002);
+*示例：增加异常名称为UserNotExist,statusCode为400(statusCode定义的范围最好在400-5\*\*)的自定义异常*
+
+
+	gmfw.regError('UserNotExist', 400);
 
 ## 返回数据格式
 
 正常响应示例：
 
 	{
-        error: false,
         result: {...} | [...] | ... // 数据类型返回什么即是什么
     }
 
-异常响应示例： 
+异常响应请捕获statusCode为400～5\*\*的响应
 
-	{
-        error: true,
-        code: '10002',
-        name: 'OtherError',
-        message: 'I just do not like you!'
-    }
+    {"code": "...", "message":"..."}
 
 ## 如何生成API文档
 	

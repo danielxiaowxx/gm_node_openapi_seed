@@ -24,20 +24,7 @@ var STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
  * @returns {*}
  */
 gmfw_fw.formatResult = function(result) {
-    if (result instanceof Error) {
-        result = {
-            error: true,
-            code: result.statusCode,
-            name: result.name,
-            message: result.message
-        };
-    } else {
-        result = {
-            error: false,
-            result: result
-        };
-    }
-    return result;
+    return {result: result};
 }
 
 /**
@@ -67,26 +54,30 @@ gmfw_fw.commonHandler = function(req, res, next, handleFn) {
             next();
             return;
         }, function (err) {
-            res.send(gmfw_fw.formatResult(new restify.RestError(err)));
-            next();
-            return;
+            return next(err);
         });
     } else { // is common object or Error object
-        res.send(gmfw_fw.formatResult(result));
-        next();
-        return;
+        if (result instanceof Error) {
+            return next(result);
+        } else {
+            res.send(gmfw_fw.formatResult(result));
+            next();
+            return;
+        }
+
     }
 }
 
 /**
  * register error type
  * @param ErrorName
- * @param errorCode
+ * @param statusCode
  */
-gmfw_fw.regError = function(ErrorName, errorCode, errModule) {
+gmfw_fw.regError = function(ErrorName, statusCode, errModule) {
     errModule.exports[ErrorName] = function(message) {
         restify.RestError.call(this, {
-            statusCode: errorCode,
+            restCode: ErrorName,
+            statusCode: statusCode,
             message: message,
             constructorOpt: errModule.exports[ErrorName]
         });

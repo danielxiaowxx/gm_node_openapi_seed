@@ -6,5 +6,5 @@
 
 var gmfw = require('../common/gmframework').fw;
 
-gmfw.regError('OtherError', 100000, module);
+gmfw.regError('OtherError', 400, module);
 
