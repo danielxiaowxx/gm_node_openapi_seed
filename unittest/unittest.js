@@ -54,6 +54,8 @@ exports.openapi_unittest = {
                 test2: function(test) {
                     this.httpRequest.get(this.server + '/demo/sayHello', {}, function(error, response, body) {
                         commonHTTPTest(test, error, body);
+
+                        test.done();
                     });
                 }
             },
@@ -67,7 +69,7 @@ exports.openapi_unittest = {
                 test1: function(test) {
                     this.httpRequest.get(this.server + '/demo/getDataFromOracledb', {}, function(error, response, body) {
                         commonHTTPTest(test, error, body);
-                        
+
                         // 其它测试
                         test.equal(body.result[0]['COUNT'], 356907);
                         test.done();
