@@ -12,13 +12,15 @@ var reporter = require('./reporters/jsonReporter');
 
 // 常规的测试，即每个Http请求单元测试都需要测试这些步骤
 function commonHTTPTest(test, error, body) {
+    var pass = true;
     if (error) {
+        pass = false;
         test.ok(false, error);
-        test.done();
     } else if (!body || body.code) {
-        test.ok(false, (body ? JSON.stringify(body) : 'response body is null'));
-        test.done();
+        pass = false;
+        test.ok(false, body ? JSON.stringify(body) : 'response body is null');
     }
+    return pass;
 }
 
 exports.openapi_unittest = {
@@ -43,18 +45,19 @@ exports.openapi_unittest = {
                 test1: function (test) {
                     var name = 'daniel';
                     this.httpRequest.get(this.server + '/demo/sayHello?' + qs.stringify({name:name}), {}, function(error, response, body) {
-                        commonHTTPTest(test, error, body);
-
-                        // 其它测试
-                        test.equal(body.result, 'Hello ' + name, JSON.stringify(body));
-                        test.done();
+                        if (!commonHTTPTest(test, error, body)) {
+                            test.done();
+                        } else {
+                            // 其它测试
+                            test.equal(body.result, 'Hello ' + name, JSON.stringify(body));
+                            test.done();
+                        }
                     });
                 },
                 // 测试不传参数
                 test2: function(test) {
                     this.httpRequest.get(this.server + '/demo/sayHello', {}, function(error, response, body) {
                         commonHTTPTest(test, error, body);
-
                         test.done();
                     });
                 }
@@ -68,11 +71,13 @@ exports.openapi_unittest = {
             'demo/getDataFromOracledb': {
                 test1: function(test) {
                     this.httpRequest.get(this.server + '/demo/getDataFromOracledb', {}, function(error, response, body) {
-                        commonHTTPTest(test, error, body);
-
-                        // 其它测试
-                        test.equal(body.result[0]['COUNT'], 356907);
-                        test.done();
+                        if (!commonHTTPTest(test, error, body)) {
+                            test.done();
+                        } else {
+                            // 其它测试
+                            test.equal(body.result[0]['COUNT'], 356907);
+                            test.done(); 
+                        }
                     });
                 }
             }

@@ -21,7 +21,7 @@ function getAllDoxData() {
     fs.readdir(routeDirPath, function(err, files) {
         var promises = [];
         files.forEach(function(file) {
-            if (file != 'index.js') {
+            if (file != 'index.js' && file.indexOf('.') != 0) { // 排除index.js和以"."开头的隐藏文件
                 promises.push(parseDox(routeDirPath + '/' +  file));
             }
         });
