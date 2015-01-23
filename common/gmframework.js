@@ -50,9 +50,13 @@ gmfw_fw.commonHandler = function(req, res, next, handleFn) {
     var result = handleFn.apply(this, funcParamVals);
     if (result && result.then && typeof (result.then) === 'function') { // is promise object
         result.then(function (data) {
-            res.send(gmfw_fw.formatResult(data));
-            next();
-            return;
+            if (data instanceof Error) {
+                return next(data);
+            } else {
+                res.send(gmfw_fw.formatResult(data));
+                next();
+                return;
+            }
         }, function (err) {
             return next(err);
         });

@@ -8,7 +8,6 @@
 
 /* imports */
 var MongoClient = require('mongodb').MongoClient;
-var Promise = require("bluebird");
 var config = require('../conf/config');
 
 /* variables */

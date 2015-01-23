@@ -23,7 +23,6 @@ exports.executeSql = function(sql, params) {
             return Promise.promisify(connection.query, connection)(sql, params || []);
         })
         .then(function(result) {
-            console.log(result);
             return result[0];
         })
         .finally(function() {
