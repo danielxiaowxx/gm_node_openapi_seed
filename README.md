@@ -334,6 +334,7 @@ db/gmMongodb.js管理所有mongodb的连接，当需要增加连接的mongodb，
 	exports.sayHello = function(name) {	
 	    if (!name) {
 	        return new restify.InvalidArgumentError('name must not be null');
+	        // promise里面可用throw new restify.InvalidArgumentError('name must not be null');
 	    }
 	}
 

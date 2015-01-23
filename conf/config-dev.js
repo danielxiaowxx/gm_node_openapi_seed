@@ -16,17 +16,17 @@ var Auth = CONF.Auth = {};
  * format: [dbname]_url
  * 参考：http://docs.mongodb.org/manual/reference/connection-string/
  */
-MongoDB.gm_data_url = 'mongodb://user:password@192.168.86.51:27017/snowball?w=1'; // gm_data mongodb server url
+MongoDB.gm_data_url = 'mongodb://app_soa:app_soa@192.168.86.51:27017/snowball?w=1'; // gm_data mongodb server url
 
 /* === Oracle DB Config  === */
 OracleDB.connStr = '(DESCRIPTION =(ADDRESS_LIST =(ADDRESS = (PROTOCOL = TCP)(HOST = 192.168.86.17)(PORT = 1521)))(CONNECT_DATA =(SERVICE_NAME = core01.db.globalmarket.com)))';
-OracleDB.user = 'user';
-OracleDB.password = 'password';
+OracleDB.user = 'APP_VO2';
+OracleDB.password = 'abc12344444';
 
 /* === Mysql DB Config === */
 MysqlDB.host = '192.168.86.121';
-MysqlDB.user = 'user';
-MysqlDB.password = 'password';
+MysqlDB.user = 'app_erp';
+MysqlDB.password = '123456';
 MysqlDB.database = 'gmsales';
 
 /* ==== 认证服务，主服务使用Memcached共享Session信息，这里通过去Memcached取得Session信息来判断是否已经登录 === */

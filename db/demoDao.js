@@ -17,6 +17,7 @@ exports.mongoTest = function() {
     var collection = gmMongo.getGMDataDB().collection('m_landing_page');
     return Promise.promisify(collection.findOne, collection)({channelType: 'lighting'})
         .then(function(data) { // 可对数据进行加工
+            //如果有异常可直接抛出 throw new restify.InvalidArgumentError('name must not be null');
             return data.data;
         });
 }

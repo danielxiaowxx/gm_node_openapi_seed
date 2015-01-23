@@ -57,7 +57,7 @@ gmfw_fw.commonHandler = function(req, res, next, handleFn) {
                 next();
                 return;
             }
-        }, function (err) {
+        }).catch(function(err) {
             return next(err);
         });
     } else { // is common object or Error object
