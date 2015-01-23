@@ -4,7 +4,7 @@
 
 var _ = require("underscore");
 var mysql = require('mysql');
-var defer = require("node-promise").defer;
+var Promise = require("bluebird");
 
 var config = require('../conf/config');
 
@@ -16,23 +16,23 @@ var gmMysqlPool  = mysql.createPool({
 });
 
 exports.executeSql = function(sql, params) {
-    var deferred = defer();
-    gmMysqlPool.getConnection(function(err, connection) {
-        connection.query(sql, params || [], function(err, results) {
-            connection.release();
-            if (err) {
-                console.log(err);
-                deferred.reject(err)
-            } else {
-                deferred.resolve(results);
-            }
+    var conn;
+    return Promise.promisify(gmMysqlPool.getConnection, gmMysqlPool)()
+        .then(function(connection) {
+            conn = connection;
+            return Promise.promisify(connection.query, connection)(sql, params || []);
+        })
+        .then(function(result) {
+            console.log(result);
+            return result[0];
+        })
+        .finally(function() {
+            if (conn) conn.release();
         });
-    });
-    return deferred.promise;
 }
 
 /**
- * 构造Oracle分页语句
+ * 构造Mysql分页语句
  * @param pageNum
  * @param pageSize
  * @param strSql

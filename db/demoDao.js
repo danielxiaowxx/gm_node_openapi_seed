@@ -5,59 +5,41 @@
 'use strict';
 
 /* imports */
-var defer = require("node-promise").defer;
+var Promise = require("bluebird");
 var gmMongo = require('./gmMongodb');
-//var gmOracle = require('./gmOracledb');
+var gmOracle = require('./gmOracledb');
 var gmMysql = require('./gmMysqldb');
 
 /**
  * 连接mongodb测试
  */
 exports.mongoTest = function() {
-    var deferred = defer();
-    var gm_cat = gmMongo.getGMDataDB().collection('gm_cat');
-
-    gm_cat.findOne({catId: catId}, {fields: {_id: 0, catId: 0, catType: 0, catName: 0, version: 0}}, function (err, cat) {
-        if (err) {
-            deferred.reject(err);
-            return;
-        }
-        deferred.resolve(cat);
-    });
-
-    return deferred.promise;
+    var collection = gmMongo.getGMDataDB().collection('m_landing_page');
+    return Promise.promisify(collection.findOne, collection)({channelType: 'lighting'})
+        .then(function(data) { // 可对数据进行加工
+            return data.data;
+        });
 }
 
 /**
  * 连接oracle测试
  */
 exports.oracleTest = function() {
-    //var deferred = defer();
-    //
-    //var sql = 'select count(0) count from acc$user';
-    //gmOracle.executeSql(sql, []).then(function(result) {
-    //    deferred.resolve(gmOracle.allFieldsToCamel(result));
-    //}, function(err) {
-    //    deferred.reject(err);
-    //});
-    //
-    //return deferred.promise;
+    var sql = 'select * from acc$user';
+    sql = gmOracle.buildPageSql(1, 10, sql);
+    return gmOracle.executeSql(sql, [])
+        .then(function(result) {
+            return gmOracle.allFieldsToCamel(result);
+        });
 }
 
 /**
  * 连接Mysql测试
  */
 exports.mysqlTest = function() {
-    var deferred = defer();
-
-    var sql = 'select count(0) count from words';
-    gmMysql.executeSql(sql, []).then(function(result) {
-        deferred.resolve(result);
-    }, function(err) {
-        deferred.reject(err);
-    });
-
-    return deferred.promise;
+    var sql = 'select * from sales_order';
+    sql = gmMysql.buildPageSql(1, 10, sql);
+    return gmMysql.executeSql(sql, []);
 }
 
 /*========== Private Methods ==================================================*/

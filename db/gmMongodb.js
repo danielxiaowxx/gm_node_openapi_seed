@@ -8,6 +8,7 @@
 
 /* imports */
 var MongoClient = require('mongodb').MongoClient;
+var Promise = require("bluebird");
 var config = require('../conf/config');
 
 /* variables */
@@ -18,6 +19,9 @@ var gmDataDB;
  */
 exports.connect = function() {
     MongoClient.connect(config.MongoDB.gm_data_url, function (err, db) {
+        if (err) {
+            console.error("Connect to MongoDB error: ", err);
+        }
         gmDataDB = db;
     });
 }

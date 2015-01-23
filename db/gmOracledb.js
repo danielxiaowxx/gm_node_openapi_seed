@@ -5,7 +5,7 @@
  */
 
 var oracleClient = require("oracle");
-var defer = require("node-promise").defer;
+var Promise = require("bluebird");
 var poolModule = require('generic-pool');
 var _ = require("underscore");
 
@@ -52,23 +52,18 @@ var gmOraclePool = poolModule.Pool({
  * @return
  */
 exports.executeSql = function(sql, params) {
-    var deferred = defer();
-    params = params ? params : [];
-    gmOraclePool.acquire(function(err, connection) {
-        if (err) {
-            deferred.reject(err);
-        } else {
-            connection.execute(sql, params, function(err, result) {
-                if (err) {
-                    deferred.reject(err);
-                } else {
-                    gmOraclePool.release(connection);
-                    deferred.resolve(result);
-                }
-            });
-        }
-    });
-    return deferred.promise;
+    var conn;
+    return Promise.promisify(gmOraclePool.acquire, gmOraclePool)()
+        .then(function(connection) {
+            conn = connection;
+            return Promise.promisify(connection.execute, connection)(sql, params);
+        })
+        .then(function(result) {
+            return result;
+        })
+        .finally(function() {
+            if (conn) gmOraclePool.release(conn);
+        });
 }
 
 /**
@@ -77,16 +72,11 @@ exports.executeSql = function(sql, params) {
  * @return
  */
 exports.getSequenceVal = function(seq) {
-    var deferred = defer();
-
     var sql = 'SELECT ' + seq + '.NEXTVAL seq FROM DUAL';
-    exports.executeSql(sql).then(function(result) {
-        deferred.resolve(result[0].SEQ);
-    }, function(err) {
-        deferred.reject(err);
-    });
-
-    return deferred.promise;
+    return exports.executeSql(sql)
+        .then(function(result) {
+            return result[0].SEQ;
+        });
 }
 
 /**

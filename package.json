@@ -7,7 +7,7 @@
         "restify": "*",
         "underscore": "*",
         "mongodb": "*",
-        "node-promise": "*",
+        "bluebird": "*",
         "bunyan": "*",
         "dox": "*",
         "memcached": "*",

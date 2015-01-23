@@ -11,8 +11,7 @@ var _ = require("underscore");
 var querystring = require('querystring');
 var Memcached = require('memcached');
 var cookie = require('cookie');
-var defer = require("node-promise").defer;
-var when = require("node-promise").when;
+var Promise = require("bluebird");
 
 var routes = require('./routes');
 var gmMongodb = require('./db/gmMongodb');
@@ -81,28 +80,28 @@ function startServer() {
         if (memcachedClient) { // 进行认证判断
             var cookies = cookie.parse(req.headers.cookie || '');
             var key = cookies ? cookies['JSESSIONID'] : null;
-            var authLoginFn = function(key) {
-                var deferred = defer();
-                if (!key) { // 没有cookie key,当没认证
-                    setTimeout(function() {
-                        deferred.resolve(false);
-                    }, 1);
-                } else {
-                    memcachedClient.get(key, function(err, data) {
-                        if (err) {
-                            deferred.reject(err);
-                            return;
-                        }
-                        // TODO 判断是否登录，判断逻辑可能需要更改
-                        if (data && data.indexOf('GM_USER') != -1) { // 已登录
-                            deferred.resolve(true);
-                        } else {
-                            deferred.resolve(false);
-                        }
-                    });
-                }
 
-                return deferred.promise;
+            var authLoginFn = function(key) {
+                return new Promise(function (resolve, reject) {
+                    if (!key) { // 没有cookie key,当没认证
+                        setTimeout(function() {
+                            resolve(false);
+                        }, 1);
+                    } else {
+                        memcachedClient.get(key, function(err, data) {
+                            if (err) {
+                                reject(err);
+                                return;
+                            }
+                            // TODO 判断是否登录，判断逻辑可能需要更改
+                            if (data && data.indexOf('GM_USER') != -1) { // 已登录
+                                resolve(true);
+                            } else {
+                                resolve(false);
+                            }
+                        });
+                    }
+                });
             }
 
             // 如果访问的url是需要认证并且用户已登录，则允许访问
@@ -111,7 +110,7 @@ function startServer() {
             }
         }
 
-        when(authPromise || true, function(isLogin) {
+        Promise.join(authPromise || true, function(isLogin) {
             if (isLogin) {
                 // handle app version no
                 var qs = querystring.parse(req.getQuery());

@@ -176,26 +176,29 @@ Daniel.xiao，[环球市场(GlobalMarket)](http://www.globalmarket.com "让'中�
 	按照路由配置(routes/index.js)，将路径的处理部分换成测试方法，如下所示：
 
 	    '1.0.0': {
-	        'Demo': {
-	            'demo/sayHello': {
-	                // 测试传参数
-	                test1: function (test) {
-	                    var name = 'daniel';
-	                    this.httpRequest.get(this.server + '/demo/sayHello?' + qs.stringify({name:name}), {}, function(error, response, body) {
-	                        test.ifError(error);
-	                        test.equal(body.result, 'Hello ' + name, JSON.stringify(body));
-	                        test.done();
-	                    });
-	                },
-	                // 测试不传参数
-	                test2: function(test) {
-	                    this.httpRequest.get(this.server + '/demo/sayHello', {}, function(error, response, body) {
-	                        test.ifError(error);
-	                        test.ok(body.error);
-	                        test.done();
-	                    });
-	                }
-	            },
+        'Demo': {
+            'demo/sayHello': {
+                // 测试传参数
+                test1: function (test) {
+                    var name = 'daniel';
+                    this.httpRequest.get(this.server + '/demo/sayHello?' + qs.stringify({name:name}), {}, function(error, response, body) {
+                        if (!commonHTTPTest(test, error, body)) {
+                            test.done();
+                        } else {
+                            // 其它测试
+                            test.equal(body.result, 'Hello ' + name, JSON.stringify(body));
+                            test.done();
+                        }
+                    });
+                },
+                // 测试不传参数
+                test2: function(test) {
+                    this.httpRequest.get(this.server + '/demo/sayHello', {}, function(error, response, body) {
+                        commonHTTPTest(test, error, body);
+                        test.done();
+                    });
+                }
+            },
 			......
 
 	单元测试用到了nodeunit，具体的测试API方法请参考https://github.com/caolan/nodeunit#api-documentation
@@ -226,6 +229,9 @@ db/gmMongodb.js管理所有mongodb的连接，当需要增加连接的mongodb，
 			......
 			// 2.增加连接代码
 		    MongoClient.connect(config.MongoDB.demo_url, function (err, db) {
+		        if (err) {
+            		console.error("Connect to MongoDB error: ", err);
+        		}
 		        demoDB = db;
 		    });
 		} 
@@ -239,20 +245,13 @@ db/gmMongodb.js管理所有mongodb的连接，当需要增加连接的mongodb，
 
 在对应的dao文件增加方法即可，以下为示例模板
 
-	exports.getGmCategoryKeywords = function(catId) {
-	    var deferred = defer();
-	    var gm_cat = gmMongo.getGMDataDB().collection('gm_cat');
-	
-	    gm_cat.findOne({catId: catId}, {fields: {_id: 0, catId: 0, catType: 0, catName: 0, version: 0}}, function (err, cat) {
-	        if (err) {
-	            deferred.reject(err);
-	            return;
-	        }
-	        deferred.resolve(cat);
-	    });
-	
-	    return deferred.promise;
-	}
+    exports.mongoTest = function() {
+        var collection = gmMongo.getGMDataDB().collection('m_landing_page');
+        return Promise.promisify(collection.findOne, collection)({channelType: 'lighting'})
+            .then(function(data) { // 可对数据进行加工
+                return data.data;
+            });
+    }
 
 ## 连接oracle数据库注意事项
 
@@ -277,12 +276,8 @@ db/gmMongodb.js管理所有mongodb的连接，当需要增加连接的mongodb，
   
 	*使用例子*：
 
-	    var sql = 'select count(0) count from acc$user';
-	    gmOracle.executeSql(sql, []).then(function(result) {
-	        deferred.resolve(gmOracle.allFieldsToCamel(result));
-	    }, function(err) {
-	        deferred.reject(err);
-	    });	
+        var sql = 'select count(0) count from acc$user';
+        return gmOracle.executeSql(sql, []);
 
 - getSequenceVal(seq)    
   作用：取得序列值  
@@ -316,12 +311,8 @@ db/gmMongodb.js管理所有mongodb的连接，当需要增加连接的mongodb，
 
 	*使用例子*：
 
-	    var sql = 'select count(0) count from words';
-	    gmMysqldb.executeSql(sql, []).then(function(result) {
-	        deferred.resolve(result);
-	    }, function(err) {
-	        deferred.reject(err);
-	    });
+        var sql = 'select count(0) count from sales_order';
+        return gmMysql.executeSql(sql, []);
 
 - buildPageSql(pageNum, pageSize, strSql)    
   作用：生成分页sql语句
