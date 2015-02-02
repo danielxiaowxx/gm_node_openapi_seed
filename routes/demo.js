@@ -11,6 +11,7 @@ var restify = require('restify');
 var errors = require('../error/errors');
 var gmfw = require('../common/gmframework');
 var demoDao = require('../db/demoDao');
+var request = require('request');
 
 
 /**
@@ -27,6 +28,10 @@ exports.sayHello = function(name) {
     // 打印日志
     var log = gmfw.util.getLogger(arguments);
     log.info('hello daniel');
+
+    // 取得客户端cookie
+    var reqCookie = gmfw.util.getReqCookie(arguments);
+    console.log('cookie:', reqCookie);
 
     // 抛restify自带异常
     if (!name)

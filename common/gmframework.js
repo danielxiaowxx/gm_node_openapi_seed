@@ -45,7 +45,7 @@ gmfw_fw.commonHandler = function(req, res, next, handleFn) {
         });
     }
 
-    funcParamVals.push(req.log); // 将log对象放在函数接收参数的最后
+    funcParamVals.push(req); // 将req对象放在函数接收参数的最后
 
     var result = handleFn.apply(this, funcParamVals);
     if (result && result.then && typeof (result.then) === 'function') { // is promise object
@@ -90,24 +90,6 @@ gmfw_fw.regError = function(ErrorName, statusCode, errModule) {
     util.inherits(errModule.exports[ErrorName], restify.RestError);
 }
 
-/**
- * 处理DAO层的promise结果
- * @param deferred
- * @param err
- * @param data
- * @param preResolveHandler
- */
-gmfw_fw.handleDAOPromiseResult = function(deferred, err, data, preResolveHandler) {
-    if (err) {
-        deferred.reject(err);
-        return;
-    }
-    if (preResolveHandler && typeof(preResolveHandler) == 'function') {
-        preResolveHandler.call();
-    }
-    deferred.resolve(data);
-}
-
 /*========== util methods ==================================================*/
 
 /**
@@ -122,12 +104,21 @@ gmfw_util.getFuncParamNames = function(func) {
 }
 
 /**
+ * 取得request对象
+ * @param params
+ */
+gmfw_util.getReqCookie = function(params) {
+    var req = params[params.length - 1];
+    return req.headers.cookie;
+}
+
+/**
  * common function get logger object
  * @param params
  */
 gmfw_util.getLogger = function(params) {
-    var log = params[params.length - 1];
-    return log;
+    var req = params[params.length - 1];
+    return req.log;
 }
 
 /**
