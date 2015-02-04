@@ -53,7 +53,13 @@ gmfw_fw.commonHandler = function(req, res, next, handleFn) {
             if (data instanceof Error) {
                 return next(data);
             } else {
-                res.send(gmfw_fw.formatResult(data));
+                if (req.url.match(/\.js/)) { // 输出为js文件
+                    res.header('content-type', 'application/javascript');
+                    res.write(data);
+                    res.send();
+                } else {
+                    res.send(gmfw_fw.formatResult(data));
+                }
                 next();
                 return;
             }
@@ -64,7 +70,14 @@ gmfw_fw.commonHandler = function(req, res, next, handleFn) {
         if (result instanceof Error) {
             return next(result);
         } else {
-            res.send(gmfw_fw.formatResult(result));
+            if (req.url.match(/\.js/)) { // 输出为js文件
+                res.header('content-type', 'application/javascript');
+                res.write(result);
+                res.send();
+            } else {
+                res.send(gmfw_fw.formatResult(result));
+            }
+
             next();
             return;
         }
@@ -119,6 +132,16 @@ gmfw_util.getReqCookie = function(params) {
 gmfw_util.getLogger = function(params) {
     var req = params[params.length - 1];
     return req.log;
+}
+
+/**
+ * 取得request对象
+ * @param params
+ * @returns {*}
+ */
+gmfw_util.getReq = function(params) {
+    var req = params[params.length - 1];
+    return req;
 }
 
 /**
