@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>Gm node openapi seed by danielxiaowxx</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">Gm node openapi seed</h1>
+      <h2 class="project-tagline">gm_node_openapi_seed</h2>
+      <a href="https://github.com/danielxiaowxx/gm_node_openapi_seed" class="btn">View on GitHub</a>
+      <a href="https://github.com/danielxiaowxx/gm_node_openapi_seed/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/danielxiaowxx/gm_node_openapi_seed/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h2>
+<a id="作者简介" class="anchor" href="#%E4%BD%9C%E8%80%85%E7%AE%80%E4%BB%8B" aria-hidden="true"><span class="octicon octicon-link"></span></a>作者简介</h2>
+
+<p>Daniel.xiao，<a href="http://www.globalmarket.com" title="让'中国制造'成为优质标志">环球市场(GlobalMarket)</a>IT研发部架构师</p>
+
+<h2>
+<a id="如何开始" class="anchor" href="#%E5%A6%82%E4%BD%95%E5%BC%80%E5%A7%8B" aria-hidden="true"><span class="octicon octicon-link"></span></a>如何开始</h2>
+
+<ol>
+<li><p>安装node (略)</p></li>
+<li><p>下载gm_node_openapi_seed项目，根据实际情况更换名字，如pa_node_openapi</p></li>
+<li><p>cd进入pa_node_openapi目录，执行<strong>npm install</strong>命令</p></li>
+<li><p>执行<strong>node main.js</strong>命令开启服务</p></li>
+<li>
+<p>打开浏览器，输入<a href="http://127.0.0.1:8080/demo/sayHello?name=daniel%EF%BC%8C%E5%A6%82%E6%9E%9C%E6%98%BE%E7%A4%BA">http://127.0.0.1:8080/demo/sayHello?name=daniel，如果显示</a>           </p>
+
+<pre><code>{"error":false,"result":"hello daniel"}
+</code></pre>
+
+<p>恭喜，openapi服务已成功运行</p>
+</li>
+</ol>
+
+<h2>
+<a id="javascript调用open-api示例" class="anchor" href="#javascript%E8%B0%83%E7%94%A8open-api%E7%A4%BA%E4%BE%8B" aria-hidden="true"><span class="octicon octicon-link"></span></a>javascript调用open API示例</h2>
+
+<p>以下为指定版本号v的示例，可以不指定版本号，默认调用最新版本的API</p>
+
+<p><em>1.POST or GET Call (以下使用jquery)</em></p>
+
+<pre><code>$.ajax( '/[app context]/demo/sayHello?v=1.0.0', {
+　 type: 'POST', // or 'GET'
+   data: {name: 'daniel'},
+   success: function(data) {
+     console.log(data);
+   },
+   error: function(err) {
+     console.log(err.responseText);
+   }
+});
+</code></pre>
+
+<p><em>2.JSONP Call (以下使用jquery)</em>     </p>
+
+<pre><code>$.ajax({
+    type: 'GET',
+    url: 'http://127.0.0.1:8080/demo/sayHello?callback=?&amp;v=1.0.0',
+    data: {name: 'daniel'},
+    dataType: 'jsonp',
+    success: function(data) {
+       console.log(data);
+    }
+});
+</code></pre>
+
+<h2>
+<a id="如何增加open-api方法" class="anchor" href="#%E5%A6%82%E4%BD%95%E5%A2%9E%E5%8A%A0open-api%E6%96%B9%E6%B3%95" aria-hidden="true"><span class="octicon octicon-link"></span></a>如何增加open API方法</h2>
+
+<p>在routes目录下，增加js文件以及相应的方法，并在index.js文件中注册服务即可</p>
+
+<p><em>示例：增加示例服务的sayHello方法</em><br>
+<em>1.增加routes/demo.js文件，增加sayHello方法</em></p>
+
+<pre><code>...
+exports.sayHello = function(name) {
+    return 'hello ' + name;
+}
+</code></pre>
+
+<p><em>2.在inddex.js文件中注册服务</em></p>
+
+<pre><code>var demo = require('./demo'); // 注意1：变量名一定要与文件名相同
+
+exports.Routes = {
+    '1.0.0': {
+        'Demo': {
+            'demo/sayHello': {handleFnName:'demo.sayHello', handelFn:demo.sayHello} // 注意2：handleFnName与handelFn的值一定要相同，只是一个是字符串，一个是函数
+        }
+    }
+}
+</code></pre>
+
+<h2>
+<a id="在api实现中如何打印日志" class="anchor" href="#%E5%9C%A8api%E5%AE%9E%E7%8E%B0%E4%B8%AD%E5%A6%82%E4%BD%95%E6%89%93%E5%8D%B0%E6%97%A5%E5%BF%97" aria-hidden="true"><span class="octicon octicon-link"></span></a>在API实现中如何打印日志</h2>
+
+<ol>
+<li>
+<p>引入gmframewordk模块</p>
+
+<pre><code>var gmfw = require('../common/gmframework');
+</code></pre>
+</li>
+</ol>
+
+<p>２. 在方法中声明log对象并调用其相应的方法</p>
+
+<pre><code>    exports.sayHello = function(name) {
+        var log = gmfw.util.getLogger(arguments);
+
+        log.info('haha');
+
+        ……
+    }
+</code></pre>
+
+<h2>
+<a id="api方法注释规范" class="anchor" href="#api%E6%96%B9%E6%B3%95%E6%B3%A8%E9%87%8A%E8%A7%84%E8%8C%83" aria-hidden="true"><span class="octicon octicon-link"></span></a>API方法注释规范</h2>
+
+<pre><code>/**
+ * [comment summary]
+ *
+ * [comment body]
+ *
+ * @param {[String|Array|Object|Number]} [param name] [param description]
+ * @return {[String|Array|Object|Number]} [return description]
+ */
+</code></pre>
+
+<p>注意：@**的说明必须在同一行，如以下：</p>
+
+<p><em>正确</em>：</p>
+
+<pre><code>@param {String} name say hello to who
+</code></pre>
+
+<p><em>错误</em>：</p>
+
+<pre><code>@param {String} name 
+say hello to who
+</code></pre>
+
+<p><em>举例</em>：</p>
+
+<pre><code>/**
+ * Just say hello ------------------------------------- [comment summary]
+ *
+ * Examples: ------------------------------------------ [comment body]
+ *
+ *   ......
+ *
+ * @param {String} name say hello to who -------------- [@param]
+ * @return {Object} format:{name:'', message:''} ------ [@return]
+ */
+exports.sayHello = function(name) { 
+    return {name:name, message:'hello ' + name};
+}
+</code></pre>
+
+<h2>
+<a id="单元测试" class="anchor" href="#%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95" aria-hidden="true"><span class="octicon octicon-link"></span></a>单元测试</h2>
+
+<p>在unittest/unittest.js中按照路由的配置(routes/index.js)对各个路径进行单元测试:</p>
+
+<ol>
+<li>
+<p>配置</p>
+
+<ul>
+<li>
+<p>当不启动登录认证时（即config.js中的Auth.required = false），配置如下</p>
+
+<pre><code>setUp: function (callback) {
+    // config
+    this.server = 'http://localhost:8080';
+
+    this.httpRequest = request.defaults({
+        json: true
+    });
+
+    ......
+}
+</code></pre>
+</li>
+<li>
+<p>当启动登录认证时（即config.js中的Auth.required = true），配置如下</p>
+
+<pre><code>setUp: function (callback) {
+    // config
+    this.server = 'http://local.globalmarket.com/nodeopenapi';
+
+    this.httpRequest = request.defaults({
+        json: true,
+        headers: {
+            cookie: 'JSESSIONID=3FC1C68B7BBCC87EFFE6237D22FFD180-n1;'
+        }
+    });
+
+    callback();
+}
+</code></pre>
+
+<p><em>注意几点：</em>   </p>
+
+<ol>
+<li>local.globalmarket.com指向本地<br>
+</li>
+<li>
+<p>本地nignx的nodeopenapi转向localhost:8080，如下配置</p>
+
+<pre><code>location ~ ^/nodeopenapi/ {
+    proxy_set_header  Host $host;
+    rewrite  /nodeopenapi(.*)$ $1 break;
+    proxy_pass http://localhost:8080;
+}
+</code></pre>
+</li>
+<li><p>浏览器打开http://*.globalmarket.com，用账号登录，然后把登录的JSESSIONID值代换上面的值</p></li>
+</ol>
+</li>
+</ul>
+</li>
+<li>
+<p>增加单元测试方法</p>
+
+<p>按照路由配置(routes/index.js)，将路径的处理部分换成测试方法，如下所示：</p>
+
+<pre><code>'1.0.0': {
+'Demo': {
+    'demo/sayHello': {
+        // 测试传参数
+        test1: function (test) {
+            var name = 'daniel';
+            this.httpRequest.get(this.server + '/demo/sayHello?' + qs.stringify({name:name}), {}, function(error, response, body) {
+                if (!commonHTTPTest(test, error, body)) {
+                    test.done();
+                } else {
+                    // 其它测试
+                    test.equal(body.result, 'Hello ' + name, JSON.stringify(body));
+                    test.done();
+                }
+            });
+        },
+        // 测试不传参数
+        test2: function(test) {
+            this.httpRequest.get(this.server + '/demo/sayHello', {}, function(error, response, body) {
+                commonHTTPTest(test, error, body);
+                test.done();
+            });
+        }
+    },
+    ......
+</code></pre>
+
+<p>单元测试用到了nodeunit，具体的测试API方法请参考<a href="https://github.com/caolan/nodeunit#api-documentation">https://github.com/caolan/nodeunit#api-documentation</a></p>
+
+<p>http请求用到了request，具体的请求方法请参考<a href="https://github.com/mikeal/request#convenience-methods">https://github.com/mikeal/request#convenience-methods</a></p>
+</li>
+<li>
+<p>运行单元测试</p>
+
+<pre><code>grunt unittest
+</code></pre>
+
+<p>运行成功后，可将unittest/report/index.html拖到浏览器即可浏览   </p>
+</li>
+</ol>
+
+<h2>
+<a id="如何配置连接mongodb" class="anchor" href="#%E5%A6%82%E4%BD%95%E9%85%8D%E7%BD%AE%E8%BF%9E%E6%8E%A5mongodb" aria-hidden="true"><span class="octicon octicon-link"></span></a>如何配置连接mongodb</h2>
+
+<p>db/gmMongodb.js管理所有mongodb的连接，当需要增加连接的mongodb，需要配置如下：</p>
+
+<ol>
+<li>
+<p>在conf/config.js增加mongodb连接参数，如下所示   </p>
+
+<pre><code>/* format: [dbname]_url */    
+MongoDB.demo_url = 'mongodb://192.168.88.225:27017/demo';
+</code></pre>
+</li>
+<li>
+<p>在db/gmMongodb.js增加相关的代码    </p>
+
+<pre><code>......
+var demoDB; // 1，增加DB对象
+......
+exports.connect = function() {
+    ......
+    // 2.增加连接代码
+    MongoClient.connect(config.MongoDB.demo_url, function (err, db) {
+        if (err) {
+            console.error("Connect to MongoDB error: ", err);
+        }
+        demoDB = db;
+    });
+} 
+......
+// 3.增加取DB对象的方法
+exports.getGMDataDB = function() {
+    return demoDB;
+}
+</code></pre>
+</li>
+</ol>
+
+<h2>
+<a id="如何增加dao层方法" class="anchor" href="#%E5%A6%82%E4%BD%95%E5%A2%9E%E5%8A%A0dao%E5%B1%82%E6%96%B9%E6%B3%95" aria-hidden="true"><span class="octicon octicon-link"></span></a>如何增加DAO层方法</h2>
+
+<p>在对应的dao文件增加方法即可，以下为示例模板</p>
+
+<pre><code>exports.mongoTest = function() {
+    var collection = gmMongo.getGMDataDB().collection('m_landing_page');
+    return Promise.promisify(collection.findOne, collection)({channelType: 'lighting'})
+        .then(function(data) { // 可对数据进行加工
+            return data.data;
+        });
+}
+</code></pre>
+
+<h2>
+<a id="连接oracle数据库注意事项" class="anchor" href="#%E8%BF%9E%E6%8E%A5oracle%E6%95%B0%E6%8D%AE%E5%BA%93%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9" aria-hidden="true"><span class="octicon octicon-link"></span></a>连接oracle数据库注意事项</h2>
+
+<p>如果是window7 64位系统，项目已经提供了编译好的node oracle module（debris/oracle.zip）,只需要解压到node_modules目录即可，然后还需要以下步骤</p>
+
+<ol>
+<li>
+<p>下载oracle instant client</p>
+
+<p>这里提供window 64位的下载地址：<a href="http://www.oracle.com/technetwork/topics/winx64soft-089540.html">http://www.oracle.com/technetwork/topics/winx64soft-089540.html</a>
+下载instantclient-basic-windows.x64-12.1.0.1.0.zip和instantclient-sdk-windows.x64-12.1.0.1.0.zip
+下载完后都解压到C:\instantclient_12_1</p>
+</li>
+<li>
+<p>设置环境变量如下　</p>
+
+<pre><code>OCI_INCLUDE_DIR=C:\instantclient_12_1\sdk\include
+OCI_LIB_DIR=C:\instantclient_12_1\sdk\lib\msvc\vc11
+Path=...;c:\instantclient_12_1\vc11;c:\instantclient_12_1
+</code></pre>
+</li>
+</ol>
+
+<h2>
+<a id="有用的gmoracledb方法" class="anchor" href="#%E6%9C%89%E7%94%A8%E7%9A%84gmoracledb%E6%96%B9%E6%B3%95" aria-hidden="true"><span class="octicon octicon-link"></span></a>有用的gmOracleDB方法</h2>
+
+<ul>
+<li>
+<p>executeSql(sql, params)<br>
+作用：执行sql语句 </p>
+
+<p><em>使用例子</em>：</p>
+
+<pre><code>  var sql = 'select count(0) count from acc$user';
+  return gmOracle.executeSql(sql, []);
+</code></pre>
+</li>
+<li>
+<p>getSequenceVal(seq)<br>
+作用：取得序列值  </p>
+
+<p><em>使用例子</em>：</p>
+
+<pre><code>  var seqName = 'SQ_ACC$USER';
+  gmOracledb.getSequenceVal(seqName).then(function(seq) {
+      ......    
+  });
+</code></pre>
+</li>
+<li>
+<p>buildPageSql(pageNum, pageSize, strSql)<br>
+作用：生成分页sql语句</p>
+
+<p><em>使用例子</em>：</p>
+
+<pre><code>  var pageNum = 1, pageSize = 10, sql = '...';
+  var pageSql = gmOracledb.buildPageSql(pageNum, pageSize, sql);
+</code></pre>
+</li>
+<li>
+<p>allFieldsToCamel(result)<br>
+将数组中的对象元素的所有key格式成camel格式，用于处理executeSql得到的结果(得到的原始result数据里面的字段全部是大写的，所以需要转换成驼峰式的格式)</p>
+
+<p><em>使用例子</em>：</p>
+
+<pre><code>  deferred.resolve(gmOracle.allFieldsToCamel(result));
+</code></pre>
+</li>
+</ul>
+
+<h2>
+<a id="有用的gmmysqldb方法" class="anchor" href="#%E6%9C%89%E7%94%A8%E7%9A%84gmmysqldb%E6%96%B9%E6%B3%95" aria-hidden="true"><span class="octicon octicon-link"></span></a>有用的gmMysqldb方法</h2>
+
+<ul>
+<li>
+<p>executeSql(sql, params)<br>
+作用：执行sql语句</p>
+
+<p><em>使用例子</em>：</p>
+
+<pre><code>  var sql = 'select count(0) count from sales_order';
+  return gmMysql.executeSql(sql, []);
+</code></pre>
+</li>
+<li>
+<p>buildPageSql(pageNum, pageSize, strSql)<br>
+作用：生成分页sql语句</p>
+
+<p><em>使用例子</em>：</p>
+
+<pre><code>  var pageNum = 1, pageSize = 10, sql = '...';
+  var pageSql = gmMysqldb.buildPageSql(pageNum, pageSize, sql);
+</code></pre>
+</li>
+</ul>
+
+<h2>
+<a id="如何处理异常" class="anchor" href="#%E5%A6%82%E4%BD%95%E5%A4%84%E7%90%86%E5%BC%82%E5%B8%B8" aria-hidden="true"><span class="octicon octicon-link"></span></a>如何处理异常</h2>
+
+<p>当需要手动处理异常时，直接返回异常对象即可。可用restify已经定义的异常或自定义异常</p>
+
+<p><em>1.返回restify已经定义的异常</em></p>
+
+<pre><code>var restify = require('restify'),
+    ...
+
+exports.sayHello = function(name) { 
+    if (!name) {
+        return new restify.InvalidArgumentError('name must not be null');
+        // promise里面可用throw new restify.InvalidArgumentError('name must not be null');
+    }
+}
+</code></pre>
+
+<p><em>2.返回自定义异常</em></p>
+
+<pre><code>var errors = require('../error/errors'),
+    ...
+
+exports.sayHello = function(name) { 
+    return new errors.OtherError('I just do not like you!');
+}
+</code></pre>
+
+<h2>
+<a id="如何自定义异常对象" class="anchor" href="#%E5%A6%82%E4%BD%95%E8%87%AA%E5%AE%9A%E4%B9%89%E5%BC%82%E5%B8%B8%E5%AF%B9%E8%B1%A1" aria-hidden="true"><span class="octicon octicon-link"></span></a>如何自定义异常对象</h2>
+
+<p>在error/errors.js中调用regError方法注册异常类型即可。  </p>
+
+<p><em>示例：增加异常名称为UserNotExist,statusCode为400(statusCode定义的范围最好在400-5\</em>*)的自定义异常*</p>
+
+<pre><code>gmfw.regError('UserNotExist', 400);
+</code></pre>
+
+<h2>
+<a id="返回数据格式" class="anchor" href="#%E8%BF%94%E5%9B%9E%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F" aria-hidden="true"><span class="octicon octicon-link"></span></a>返回数据格式</h2>
+
+<p>正常响应示例：</p>
+
+<pre><code>{
+    result: {...} | [...] | ... // 数据类型返回什么即是什么
+}
+</code></pre>
+
+<p>异常响应请捕获statusCode为400～5**的响应</p>
+
+<pre><code>{"code": "...", "message":"..."}
+</code></pre>
+
+<h2>
+<a id="如何生成api文档" class="anchor" href="#%E5%A6%82%E4%BD%95%E7%94%9F%E6%88%90api%E6%96%87%E6%A1%A3" aria-hidden="true"><span class="octicon octicon-link"></span></a>如何生成API文档</h2>
+
+<ol>
+<li>
+<p>运行genAPIDoc.js文件</p>
+
+<pre><code>grunt genDoc
+</code></pre>
+</li>
+<li><p>直接将apidoc/index.html拖到浏览器即可浏览</p></li>
+</ol>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/danielxiaowxx/gm_node_openapi_seed">Gm node openapi seed</a> is maintained by <a href="https://github.com/danielxiaowxx">danielxiaowxx</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
+
