@@ -10,7 +10,7 @@ Daniel.xiao，[环球市场(GlobalMarket)](http://www.globalmarket.com "让'中�
  
 3. cd进入pa\_node\_openapi目录，执行**npm install**命令
 
-4. 执行**node main.js**命令开启服务
+4. 执行**node bin/www**命令开启服务
 
 5. 打开浏览器，输入http://127.0.0.1:8080/demo/sayHello?name=daniel，如果显示			
 
